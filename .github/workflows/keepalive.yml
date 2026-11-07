@@ -1,0 +1,21 @@
+# GitHub turns off schedules in a public repo after 60 days without a commit: one small commit a month keeps it on.
+name: Keep alive
+on:
+  schedule:
+    - cron: "0 4 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  touch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          date -u +%F > last-alive.txt
+          git config user.name "kanon-alerts"
+          git config user.email "ops@kanon.solutions"
+          git add last-alive.txt
+          git commit -m "Keep alive $(date -u +%F)" && git push

@@ -1,0 +1,20 @@
+# About every 5 minutes: ask KANON to run one round of take-profit alerts. Off until the ALERTS_RUN_SECRET secret is set.
+name: Alerts
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check the steps people set
+        env:
+          SECRET: ${{ secrets.ALERTS_RUN_SECRET }}
+        run: |
+          if [ -z "$SECRET" ]; then echo "Alerts not switched on (no secret)."; exit 0; fi
+          curl -sS --fail-with-body -m 90 -X POST https://www.kanon.solutions/api/alerts/run -H "authorization: Bearer $SECRET"
