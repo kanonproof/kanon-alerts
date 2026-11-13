@@ -7,6 +7,11 @@ on:
 
 permissions: {}
 
+# One round at a time: a late run waits for the one still going (KANON also never sends a step twice).
+concurrency:
+  group: alerts
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
